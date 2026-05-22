@@ -10,6 +10,30 @@ import { getTokenAutomationSnapshot } from "../../presentation/workbench/tokenAu
 import { getAutoSwitchRuntimeSnapshot } from "../../presentation/workbench/autoSwitchState";
 import { getAccountAutomationState, isHealthDismissed, resolveAccountHealth } from "../accounts/health";
 
+const CREDIT_COPY = {
+  zh: { unlimited: "无限", available: "可用", label: "剩余额度" },
+  "zh-hant": { unlimited: "无限", available: "可用", label: "剩余额度" },
+  "pt-br": { unlimited: "Ilimitado", available: "Disponível", label: "Créditos restantes" },
+  en: { unlimited: "Unlimited", available: "Available", label: "Credits left" }
+} as const;
+
+const ADD_METHOD_COPY = {
+  local: { zh: "本地导入", "zh-hant": "本地导入", "pt-br": "Importação local", en: "Local import" },
+  json: { zh: "JSON导入", "zh-hant": "JSON导入", "pt-br": "Importação de JSON", en: "JSON import" },
+  oauth: { zh: "OAuth授权", "zh-hant": "OAuth授权", "pt-br": "OAuth", en: "OAuth" },
+  token: { zh: "Token导入", "zh-hant": "Token导入", "pt-br": "Importação de token", en: "Token import" },
+  apikey: { zh: "API Key导入", "zh-hant": "API Key导入", "pt-br": "Importação de chave API", en: "API key import" },
+  unknown: { zh: "未知来源", "zh-hant": "未知来源", "pt-br": "Origem desconhecida", en: "Unknown source" }
+} as const;
+
+function resolveDashboardLocale(lang: DashboardState["lang"]): keyof typeof CREDIT_COPY {
+  if (lang === "zh" || lang === "zh-hant" || lang === "pt-br") {
+    return lang;
+  }
+
+  return "en";
+}
+
 export async function buildDashboardState(
   repo: AccountsRepository,
   settingsStore: ExtensionSettingsStore,
@@ -317,16 +341,10 @@ function formatCreditsText(credits: CodexCreditsSummary | undefined, lang: Dashb
     return undefined;
   }
 
-  const zh = lang === "zh" || lang === "zh-hant";
-  const ptBr = lang === "pt-br";
-  const value = credits.unlimited
-    ? zh
-      ? "无限"
-      : ptBr
-        ? "Ilimitado"
-        : "Unlimited"
-    : credits.balance || (credits.hasCredits ? (zh ? "可用" : ptBr ? "Disponível" : "Available") : "0");
-  const label = zh ? "剩余额度" : ptBr ? "Créditos restantes" : "Credits left";
+  const locale = resolveDashboardLocale(lang);
+  const copy = CREDIT_COPY[locale];
+  const value = credits.unlimited ? copy.unlimited : credits.balance || (credits.hasCredits ? copy.available : "0");
+  const label = copy.label;
   return `${label}: ${value}`;
 }
 
@@ -444,21 +462,12 @@ function formatAddedAt(epochMs: number | undefined, fallback: string): string {
 
 function formatAddMethod(value: string | undefined, lang: DashboardState["lang"]): string {
   const normalized = value?.trim().toLowerCase();
-  const zh = lang === "zh" || lang === "zh-hant";
-  switch (normalized) {
-    case "local":
-      return zh ? "本地导入" : lang === "pt-br" ? "Importação local" : "Local import";
-    case "json":
-      return zh ? "JSON导入" : lang === "pt-br" ? "Importação de JSON" : "JSON import";
-    case "oauth":
-      return zh ? "OAuth授权" : lang === "pt-br" ? "OAuth" : "OAuth";
-    case "token":
-      return zh ? "Token导入" : lang === "pt-br" ? "Importação de token" : "Token import";
-    case "apikey":
-      return zh ? "API Key导入" : lang === "pt-br" ? "Importação de chave API" : "API key import";
-    default:
-      return zh ? "未知来源" : lang === "pt-br" ? "Origem desconhecida" : "Unknown source";
-  }
+  const locale = resolveDashboardLocale(lang);
+  const key =
+    normalized === "local" || normalized === "json" || normalized === "oauth" || normalized === "token" || normalized === "apikey"
+      ? normalized
+      : "unknown";
+  return ADD_METHOD_COPY[key][locale];
 }
 
 function getHealthPriority(health: ReturnType<typeof resolveAccountHealth>): number {

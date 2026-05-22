@@ -10,6 +10,7 @@ node_modules/**
 src/**
 webview-src/**
 test/**
+scripts/**
 **/*.map
 
 docs/**

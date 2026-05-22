@@ -2,6 +2,7 @@ node_modules
 out
 coverage
 *.vsix
+!codex-accounts-manager.vsix
 .claude
 .vscode
 .idea

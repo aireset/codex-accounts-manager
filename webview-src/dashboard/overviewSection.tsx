@@ -19,10 +19,13 @@ export function OverviewSection(props: {
   disabled: boolean;
   addPending: boolean;
   importPending: boolean;
+  exportAllPending: boolean;
   refreshAllPending: boolean;
   onToggleAutoSwitchLock: () => void;
   onAddAccount: () => void;
   onImportCurrent: () => void;
+  onExportAll: () => void;
+  onImportAll: () => void;
   onRefreshAll: () => void;
 }) {
   const { account, copy, settings, now, hasAccounts, privacyMode } = props;
@@ -112,6 +115,17 @@ export function OverviewSection(props: {
         <div class="toolbar">
           <ActionButton class="toolbar-btn primary-btn" pending={props.addPending} disabled={props.disabled} onClick={props.onAddAccount}>
             {copy.addAccount}
+          </ActionButton>
+          <ActionButton
+            class="toolbar-btn"
+            pending={props.exportAllPending}
+            disabled={props.disabled || !props.hasAccounts}
+            onClick={props.onExportAll}
+          >
+            {copy.shareTokenModalTitle}
+          </ActionButton>
+          <ActionButton class="toolbar-btn" disabled={props.disabled} onClick={props.onImportAll}>
+            {copy.importJson}
           </ActionButton>
           <ActionButton class="toolbar-btn" pending={props.importPending} disabled={props.disabled} onClick={props.onImportCurrent}>
             {copy.importCurrent}

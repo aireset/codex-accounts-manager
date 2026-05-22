@@ -290,9 +290,12 @@ function App() {
             disabled={hasGlobalPendingAction || snapshot.indexHealth.status === "corrupted_unrecoverable"}
             addPending={prepareOAuthPending}
             importPending={isActionPending("importCurrent")}
+            exportAllPending={sharePending}
             refreshAllPending={isActionPending("refreshAll")}
             onToggleAutoSwitchLock={handleAutoSwitchLock}
             onAddAccount={modals.openAddAccountModal}
+            onExportAll={() => sendAction("shareTokens", undefined, { accountIds: snapshot.accounts.map((account) => account.id) })}
+            onImportAll={modals.openImportAccountModal}
             onImportCurrent={() => sendAction("importCurrent")}
             onRefreshAll={() => sendAction("refreshAll")}
           />

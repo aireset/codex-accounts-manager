@@ -48,6 +48,14 @@ export function useAccountSessionModal(params: {
     params.sendAction("prepareOAuthSession");
   };
 
+  const openImportAccountModal = (): void => {
+    setAddAccountModalOpen(true);
+    setAddAccountTab("import");
+    setImportRecoveryMode(false);
+    oauth.reset();
+    sharedImport.clearImportFeedback();
+  };
+
   const openRecoveryImportModal = (): void => {
     setAddAccountModalOpen(true);
     setAddAccountTab("import");
@@ -98,6 +106,7 @@ export function useAccountSessionModal(params: {
     importRecoveryMode,
     confirmCancelOauthOpen,
     openAddAccountModal,
+    openImportAccountModal,
     openRecoveryImportModal,
     handleAddAccountTabChange,
     handleCopyOauthLink: oauth.handleCopyOauthLink,

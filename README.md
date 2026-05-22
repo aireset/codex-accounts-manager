@@ -1,6 +1,6 @@
 # Codex Accounts Manager
 
-[English](README.en.md) · Português (Brasil)
+[Português (Brasil)](README.md) · [English](README.en.md)
 
 Extensão do VS Code para gerenciar várias contas Codex, visualizar cotas e alternar o `auth.json` global ativo.
 

@@ -269,7 +269,7 @@ export function resolveSubscriptionDisplay(
     lang === "zh" || lang === "zh-hant"
       ? `${dateText}（${days} 天）`
       : lang === "pt-br"
-        ? `${dateText} (${days} dia${days === 1 ? "" : "s"})`
+        ? `${dateText} (${days} dia${days !== 1 ? "s" : ""})`
         : `${dateText} (${days}d)`;
   const color = diffMs <= 3 * 86_400_000 ? "#ef4444" : diffMs <= 10 * 86_400_000 ? "#f59e0b" : "var(--accent-green)";
 

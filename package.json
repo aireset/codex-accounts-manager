@@ -1,7 +1,7 @@
 {
   "name": "codex-accounts-manager",
-  "displayName": "Codex Accounts Manager",
-  "description": "Manage multiple Codex accounts in VS Code, inspect quota, and switch the active global auth.json.",
+  "displayName": "Gerenciador de Contas Codex",
+  "description": "Gerencie várias contas Codex no VS Code, consulte cotas e alterne o auth.json global ativo.",
   "version": "0.1.10",
   "publisher": "wannanbigpig",
   "icon": "media/CT_logo_transparent_square_hd.png",
@@ -22,7 +22,7 @@
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
-      "title": "Codex Accounts",
+      "title": "Contas Codex",
       "properties": {
         "codexAccounts.codexAppRestartMode": {
           "type": "string",
@@ -31,12 +31,12 @@
             "manual"
           ],
           "default": "manual",
-          "markdownDescription": "How to handle Codex App restart when switching accounts and the desktop app is already running. `auto` restarts it automatically, `manual` asks you to click restart each time."
+          "markdownDescription": "Como lidar com o reinício do Codex App ao trocar de conta quando o aplicativo desktop já estiver em execução. `auto` reinicia automaticamente; `manual` pede que você confirme o reinício a cada vez."
         },
         "codexAccounts.codexAppRestartEnabled": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Whether Codex Accounts Manager should manage Codex App when switching accounts. Turn this off to skip restart prompts and app handling entirely."
+          "markdownDescription": "Define se o Gerenciador de Contas Codex deve controlar o Codex App ao trocar de conta. Desative para ignorar avisos de reinício e qualquer gerenciamento do aplicativo."
         },
         "codexAccounts.dashboardTheme": {
           "type": "string",
@@ -46,7 +46,7 @@
             "light"
           ],
           "default": "auto",
-          "markdownDescription": "Theme used by the Codex Accounts dashboard. `auto` follows the current VS Code color theme."
+          "markdownDescription": "Tema usado no painel de Contas Codex. `auto` segue o tema de cores atual do VS Code."
         },
         "codexAccounts.displayLanguage": {
           "type": "string",
@@ -70,7 +70,7 @@
             "vi"
           ],
           "default": "auto",
-          "markdownDescription": "Language used by Codex Accounts Manager. `auto` follows the current VS Code display language. Dashboard, details, and core notifications use localized copy when available and fall back to English for any missing edge-case strings."
+          "markdownDescription": "Idioma usado pelo Gerenciador de Contas Codex. `auto` segue o idioma de exibição atual do VS Code. Painel, detalhes e notificações principais usam textos localizados quando disponíveis e recorrem ao inglês apenas em casos extremos ainda sem tradução."
         },
         "codexAccounts.autoRefreshMinutes": {
           "type": "number",
@@ -78,55 +78,55 @@
           "maximum": 60,
           "multipleOf": 1,
           "default": 0,
-          "markdownDescription": "Automatically refresh saved account quotas every N minutes. Set to `0` to disable, or choose any interval from `1` to `60` minutes."
+          "markdownDescription": "Atualiza automaticamente as cotas das contas salvas a cada N minutos. Defina `0` para desativar ou escolha qualquer intervalo entre `1` e `60` minutos."
         },
         "codexAccounts.backgroundTokenRefreshEnabled": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "Automatically refresh saved account tokens in the background before they expire while VS Code is running."
+          "markdownDescription": "Atualiza automaticamente, em segundo plano, os tokens das contas salvas antes que expirem enquanto o VS Code estiver em execução."
         },
         "codexAccounts.autoSwitchEnabled": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Automatically switch away from the active account when its quota falls below the configured hourly or weekly threshold. Candidate accounts are ranked by the best matching remaining quota."
+          "markdownDescription": "Alterna automaticamente para outra conta quando a cota da conta ativa cair abaixo do limite horário ou semanal configurado. As contas candidatas são classificadas pela melhor cota restante disponível."
         },
         "codexAccounts.autoSwitchHourlyThreshold": {
           "type": "number",
           "minimum": 0,
           "maximum": 20,
           "default": 20,
-          "markdownDescription": "Automatic account switching threshold for the 5-hour quota. Switching is triggered when the active account drops to or below this percentage."
+          "markdownDescription": "Limite de troca automática para a cota de 5 horas. A troca é acionada quando a conta ativa cai para este percentual ou abaixo dele."
         },
         "codexAccounts.autoSwitchWeeklyThreshold": {
           "type": "number",
           "minimum": 0,
           "maximum": 20,
           "default": 20,
-          "markdownDescription": "Automatic account switching threshold for the weekly quota. Switching is triggered when the active account drops to or below this percentage."
+          "markdownDescription": "Limite de troca automática para a cota semanal. A troca é acionada quando a conta ativa cai para este percentual ou abaixo dele."
         },
         "codexAccounts.autoSwitchLockMinutes": {
           "type": "number",
           "minimum": 0,
           "maximum": 120,
           "default": 0,
-          "markdownDescription": "Default lock duration in minutes when temporarily locking the current account against automatic account switching. Set to `0` to disable locking by default."
+          "markdownDescription": "Duração padrão do bloqueio temporário, em minutos, ao impedir a troca automática da conta atual. Defina `0` para desativar esse bloqueio por padrão."
         },
         "codexAccounts.codexAppPath": {
           "type": "string",
           "default": "",
-          "markdownDescription": "Optional custom path to the Codex desktop app. If empty, the extension uses built-in platform-specific detection."
+          "markdownDescription": "Caminho personalizado opcional para o aplicativo desktop Codex. Se ficar vazio, a extensão usa a detecção integrada por plataforma."
         },
         "codexAccounts.quotaWarningEnabled": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Show a warning notification when the active account's 5-hour or weekly remaining quota drops below the configured threshold."
+          "markdownDescription": "Mostra uma notificação de aviso quando a cota restante de 5 horas ou semanal da conta ativa cair abaixo do limite configurado."
         },
         "codexAccounts.quotaWarningThreshold": {
           "type": "number",
           "minimum": 5,
           "maximum": 90,
           "default": 20,
-          "markdownDescription": "Warning threshold percentage shared by the active account's 5-hour and weekly remaining quota."
+          "markdownDescription": "Percentual de aviso compartilhado pela cota restante de 5 horas e pela cota semanal da conta ativa."
         },
         "codexAccounts.quotaGreenThreshold": {
           "type": "number",
@@ -138,7 +138,7 @@
             90
           ],
           "default": 60,
-          "markdownDescription": "Quota percentage at or above this value is shown in green."
+          "markdownDescription": "Percentuais de cota iguais ou acima deste valor são exibidos em verde."
         },
         "codexAccounts.quotaYellowThreshold": {
           "type": "number",
@@ -150,63 +150,63 @@
             50
           ],
           "default": 20,
-          "markdownDescription": "Quota percentage at or above this value is shown in yellow. Values below this threshold are shown in red."
+          "markdownDescription": "Percentuais de cota iguais ou acima deste valor são exibidos em amarelo. Valores abaixo desse limite são exibidos em vermelho."
         },
         "codexAccounts.debugNetwork": {
           "type": "boolean",
           "default": false,
-          "markdownDescription": "Enable sanitized network debug logs for Codex Accounts Manager requests in the `Codex Accounts Network` output channel."
+          "markdownDescription": "Ativa logs de depuração de rede com dados sensíveis mascarados para as requisições do Gerenciador de Contas Codex no canal de saída `Codex Accounts Network`."
         }
       }
     },
     "commands": [
       {
         "command": "codexAccounts.addAccount",
-        "title": "Codex Accounts: Add Account via OAuth"
+        "title": "Contas Codex: Adicionar conta via OAuth"
       },
       {
         "command": "codexAccounts.importCurrentAuth",
-        "title": "Codex Accounts: Import Current auth.json"
+        "title": "Contas Codex: Importar auth.json atual"
       },
       {
         "command": "codexAccounts.switchAccount",
-        "title": "Codex Accounts: Switch Account"
+        "title": "Contas Codex: Alternar conta"
       },
       {
         "command": "codexAccounts.refreshQuota",
-        "title": "Codex Accounts: Refresh Quota"
+        "title": "Contas Codex: Atualizar cota"
       },
       {
         "command": "codexAccounts.refreshAllQuotas",
-        "title": "Codex Accounts: Refresh All Quotas"
+        "title": "Contas Codex: Atualizar todas as cotas"
       },
       {
         "command": "codexAccounts.restoreAccountsFromBackup",
-        "title": "Codex Accounts: Restore Accounts from Backup"
+        "title": "Contas Codex: Restaurar contas do backup"
       },
       {
         "command": "codexAccounts.restoreAccountsFromAuthJson",
-        "title": "Codex Accounts: Restore Accounts from auth.json"
+        "title": "Contas Codex: Restaurar contas do auth.json"
       },
       {
         "command": "codexAccounts.restoreAccountsFromSharedJson",
-        "title": "Codex Accounts: Restore Accounts from Shared JSON"
+        "title": "Contas Codex: Restaurar contas do JSON compartilhado"
       },
       {
         "command": "codexAccounts.removeAccount",
-        "title": "Codex Accounts: Remove Account"
+        "title": "Contas Codex: Remover conta"
       },
       {
         "command": "codexAccounts.openDetails",
-        "title": "Codex Accounts: Open Details"
+        "title": "Contas Codex: Abrir detalhes"
       },
       {
         "command": "codexAccounts.openCodexHome",
-        "title": "Codex Accounts: Open Codex Home"
+        "title": "Contas Codex: Abrir página inicial do Codex"
       },
       {
         "command": "codexAccounts.showQuotaSummary",
-        "title": "Codex Accounts: Show Quota Summary"
+        "title": "Contas Codex: Mostrar resumo de cotas"
       }
     ],
     "menus": {}

@@ -138,6 +138,9 @@ function resolveOverviewLabel(key: "subscription" | "workspace", lang: Dashboard
     if (lang === "zh-hant") {
       return "訂閱到期";
     }
+    if (lang === "pt-br") {
+      return "Assinatura";
+    }
     return "Subscription";
   }
 
@@ -146,6 +149,9 @@ function resolveOverviewLabel(key: "subscription" | "workspace", lang: Dashboard
   }
   if (lang === "zh-hant") {
     return "工作空間";
+  }
+  if (lang === "pt-br") {
+    return "Espaço de trabalho";
   }
   return "Workspace";
 }

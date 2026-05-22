@@ -31,7 +31,7 @@ type AboutLocaleText = {
   disclaimer: string;
 };
 
-const ABOUT_TEXT: Record<"en" | "zh" | "zh-hant", AboutLocaleText> = {
+const ABOUT_TEXT: Record<"en" | "zh" | "zh-hant" | "pt-br", AboutLocaleText> = {
   en: {
     title: "About",
     close: "Close",
@@ -127,6 +127,38 @@ const ABOUT_TEXT: Record<"en" | "zh" | "zh-hant", AboutLocaleText> = {
     disclaimerTitle: "免責聲明",
     disclaimer:
       "本專案按「現狀」提供，不附帶任何明示或默示擔保。專案作者與貢獻者不對因使用、誤用、依賴或無法使用本專案而產生的任何直接、間接、附帶、特殊或後續損失承擔責任。"
+  },
+  "pt-br": {
+    title: "Sobre",
+    close: "Fechar",
+    extensionChip: "Extensão do VS Code",
+    localChip: "Local em primeiro lugar",
+    desc: "Um painel local para gerenciar contas Codex, visualizar cotas e alternar contas dentro do VS Code.",
+    subdesc:
+      "O Codex Accounts Manager foca nas contas salvas que você já possui, ajudando a organizar tokens, consultar cotas, alternar contas e entender melhor o estado de cada conta.",
+    author: "Autor",
+    authorDesc: "wannanbigpig",
+    github: "Repositório",
+    githubDesc: "Ver código-fonte",
+    feedback: "Feedback",
+    feedbackDesc: "Reportar problemas ou ideias",
+    license: "Licença",
+    licenseDesc: "Licença MIT",
+    purposeTitle: "Objetivo do projeto",
+    purposeItems: [
+      "Voltado para aprendizado, pesquisa local e organização cotidiana de contas no contexto do gerenciamento de contas Codex.",
+      "Este projeto não é um cliente oficial, plugin oficial ou ferramenta autorizada de gerenciamento de nenhuma plataforma de terceiros.",
+      "Ele ajuda na observação e alternância locais, e não deve ser entendido como uma ferramenta que promete contornar políticas de plataforma."
+    ],
+    riskTitle: "Notas de uso",
+    riskItems: [
+      "Use apenas contas, tokens e ambientes locais que pertencem legalmente a você ou para os quais você tenha autorização de uso.",
+      "Você continua responsável por seguir os termos da plataforma, regras de conta, políticas de uso de API e leis aplicáveis.",
+      "Trocas frequentes, requisições anormais, credenciais vazadas, limites de taxa, restrições de conta ou erros de dados são riscos que você deve avaliar por conta própria."
+    ],
+    disclaimerTitle: "Aviso legal",
+    disclaimer:
+      "Este projeto é fornecido no estado em que se encontra, sem garantias. O autor e os contribuidores não se responsabilizam por perdas causadas pelo uso, mau uso, confiança ou incapacidade de uso deste projeto."
   }
 };
 
@@ -226,7 +258,7 @@ export function AboutModal(props: {
 }
 
 function getAboutText(lang: DashboardState["lang"]): AboutLocaleText {
-  if (lang === "zh" || lang === "zh-hant") {
+  if (lang === "zh" || lang === "zh-hant" || lang === "pt-br") {
     return ABOUT_TEXT[lang];
   }
   return ABOUT_TEXT.en;

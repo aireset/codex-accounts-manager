@@ -31,7 +31,7 @@ const LESS_THAN_MINUTE_LABELS: Record<DashboardLanguage, string> = {
   es: "<1m left",
   de: "<1m left",
   fr: "<1m left",
-  "pt-br": "<1m left",
+  "pt-br": "<1 min restante",
   ru: "<1m left",
   ko: "1분 미만",
   it: "<1m left",
@@ -50,7 +50,7 @@ const RESET_LABELS: Record<DashboardLanguage, string> = {
   es: "reset",
   de: "reset",
   fr: "reset",
-  "pt-br": "reset",
+  "pt-br": "reiniciado",
   ru: "reset",
   ko: "재설정됨",
   it: "reset",
@@ -96,6 +96,10 @@ function formatDurationParts(parts: DurationPart[], lang: DashboardLanguage): st
   const formattedParts = parts.map((part) => `${part.value}${labels[part.unit]}`);
   if (lang === "zh" || lang === "zh-hant" || lang === "ja" || lang === "ko") {
     return formattedParts.join(" ");
+  }
+
+  if (lang === "pt-br") {
+    return `${formattedParts.join(" ")} restantes`;
   }
 
   return `${formattedParts.join(" ")} left`;

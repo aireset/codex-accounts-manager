@@ -20,6 +20,68 @@ import {
 import { ActionButton } from "./primitives";
 import { MetricRow, renderHealthPill } from "./accountMetricPrimitives";
 
+const BACK_LABELS = {
+  workspace: {
+    zh: "工作空间",
+    "zh-hant": "工作空間",
+    "pt-br": "Espaço de trabalho",
+    en: "Workspace"
+  },
+  subscription: {
+    zh: "订阅到期",
+    "zh-hant": "訂閱到期",
+    "pt-br": "Assinatura",
+    en: "Subscription"
+  },
+  addMethod: {
+    zh: "添加方式",
+    "zh-hant": "添加方式",
+    "pt-br": "Adicionado por",
+    en: "Added by"
+  },
+  addedAt: {
+    zh: "添加时间",
+    "zh-hant": "添加時間",
+    "pt-br": "Adicionado em",
+    en: "Added at"
+  },
+  status: {
+    zh: "状态",
+    "zh-hant": "狀態",
+    "pt-br": "Status",
+    en: "Status"
+  }
+} as const;
+
+const ACTIVE_STATUS_LABELS = {
+  zh: "当前激活",
+  "zh-hant": "目前啟用",
+  "pt-br": "Ativa no momento",
+  en: "Current active"
+} as const;
+
+const NO_TAGS_LABELS = {
+  zh: "暂无标签",
+  "zh-hant": "暫無標籤",
+  "pt-br": "Sem tags",
+  en: "No tags"
+} as const;
+
+const BACK_HINT_LABELS = {
+  zh: "点击卡片任意区域返回配额监控",
+  "zh-hant": "點擊卡片任意區域返回配額監控",
+  "pt-br": "Clique em qualquer lugar do cartão para voltar ao monitor de cotas",
+  en: "Click anywhere to return to quota monitor"
+} as const;
+
+function resolveSavedAccountLocale(lang: DashboardState["lang"]): keyof typeof ACTIVE_STATUS_LABELS {
+  if (lang === "zh" || lang === "zh-hant" || lang === "pt-br") {
+    return lang;
+  }
+
+  return "en";
+}
+
 export function SavedAccountCard(props: {
   account: DashboardAccountViewModel;
   lang: DashboardState["lang"];
@@ -228,37 +290,23 @@ function resolveBackLabel(
   key: "workspace" | "subscription" | "addMethod" | "addedAt" | "status",
   lang: DashboardState["lang"]
 ): string {
-  const zh = lang === "zh" || lang === "zh-hant";
-  const labels = {
-    workspace: zh ? "工作空间" : "Workspace",
-    subscription: zh ? "订阅到期" : "Subscription",
-    addMethod: zh ? "添加方式" : "Added by",
-    addedAt: zh ? "添加时间" : "Added at",
-    status: zh ? "状态" : "Status"
-  };
-  return labels[key];
+  const locale = resolveSavedAccountLocale(lang);
+  return BACK_LABELS[key][locale];
 }
 
 function resolveBackStatus(account: DashboardAccountViewModel, lang: DashboardState["lang"]): string {
   if (account.isActive) {
-    return lang === "zh" ? "当前激活" : lang === "zh-hant" ? "目前啟用" : "Current active";
+    return ACTIVE_STATUS_LABELS[resolveSavedAccountLocale(lang)];
   }
   return account.healthLabel;
 }
 
 function resolveNoTags(lang: DashboardState["lang"]): string {
-  return lang === "zh" ? "暂无标签" : lang === "zh-hant" ? "暫無標籤" : "No tags";
+  return NO_TAGS_LABELS[resolveSavedAccountLocale(lang)];
 }
 
 function resolveBackHint(lang: DashboardState["lang"]): string {
-  switch (lang) {
-    case "zh":
-      return "点击卡片任意区域返回配额监控";
-    case "zh-hant":
-      return "點擊卡片任意區域返回配額監控";
-    default:
-      return "Click anywhere to return to quota monitor";
-  }
+  return BACK_HINT_LABELS[resolveSavedAccountLocale(lang)];
 }
 
 function CardDetailRow(props: { label: string; value: string; title?: string; color?: string }) {

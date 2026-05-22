@@ -8,7 +8,9 @@ import type {
 } from "../../src/domain/dashboard/types";
 import { getSensitiveDisplayValue, renderTagList } from "./helpers";
 import {
+  CopyIcon,
   EditTagsIcon,
+  DownloadIcon,
   renderDetailsIcon,
   renderRefreshIcon,
   renderReauthorizeIcon,
@@ -95,6 +97,8 @@ export function SavedAccountCard(props: {
   reauthorizePending: boolean;
   resyncProfilePending: boolean;
   refreshPending: boolean;
+  downloadPending: boolean;
+  copyPending: boolean;
   detailsPending: boolean;
   removePending: boolean;
   togglePending: boolean;
@@ -103,7 +107,17 @@ export function SavedAccountCard(props: {
   onToggleSelected: () => void;
   onEditTags: () => void;
   onAction: (
-    action: "details" | "switch" | "reloadPrompt" | "reauthorize" | "resyncProfile" | "refresh" | "remove" | "toggleStatusBar",
+    action:
+      | "details"
+      | "switch"
+      | "reloadPrompt"
+      | "reauthorize"
+      | "resyncProfile"
+      | "refresh"
+      | "downloadAccountAuthJson"
+      | "copyAccountAuthJson"
+      | "remove"
+      | "toggleStatusBar",
     accountId?: string,
     payload?: DashboardActionPayload
   ) => void;
@@ -240,6 +254,8 @@ export function SavedAccountCard(props: {
             ) : null}
             <ActionButton icon={renderSwitchIcon()} iconOnly label={copy.switchBtn} pending={props.switchPending} disabled={props.busy} onClick={() => onAction("switch", account.id)} />
             <ActionButton icon={renderRefreshIcon()} iconOnly label={copy.refreshBtn} pending={props.refreshPending} disabled={props.busy} onClick={() => onAction("refresh", account.id)} />
+            <ActionButton icon={<CopyIcon />} iconOnly label={copy.copyJson} pending={props.copyPending} disabled={props.busy} onClick={() => onAction("copyAccountAuthJson", account.id)} />
+            <ActionButton icon={<DownloadIcon />} iconOnly label={copy.downloadJson} pending={props.downloadPending} disabled={props.busy} onClick={() => onAction("downloadAccountAuthJson", account.id)} />
             <ActionButton icon={renderDetailsIcon()} iconOnly label={copy.detailsBtn} pending={props.detailsPending} disabled={props.busy} onClick={() => onAction("details", account.id, { privacyMode })} />
             <ActionButton icon={renderRemoveIcon()} iconOnly label={copy.removeBtn} pending={props.removePending} disabled={props.busy} onClick={() => onAction("remove", account.id)} />
           </div>

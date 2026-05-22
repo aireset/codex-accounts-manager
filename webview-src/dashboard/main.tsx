@@ -348,6 +348,8 @@ function App() {
                   reauthorizePending={isActionPending("reauthorize", account.id)}
                   resyncProfilePending={isActionPending("resyncProfile", account.id)}
                   refreshPending={isActionPending("refresh", account.id)}
+                  copyPending={isActionPending("copyAccountAuthJson", account.id)}
+                  downloadPending={isActionPending("downloadAccountAuthJson", account.id)}
                   detailsPending={isActionPending("details", account.id)}
                   removePending={isActionPending("remove", account.id)}
                   togglePending={isActionPending("toggleStatusBar", account.id)}

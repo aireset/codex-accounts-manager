@@ -63,6 +63,7 @@ import {
   CodexAccountRecord,
   CodexAccountsIndex,
   CodexAccountsRestoreResult,
+  CodexAuthFile,
   CodexImportPreviewSummary,
   CodexImportResultIssue,
   CodexImportResultSummary,
@@ -555,6 +556,31 @@ export class AccountsRepository {
     }
 
     return sharedAccounts;
+  }
+
+  async exportAccountAuthFile(accountId: string): Promise<CodexAuthFile> {
+    const account = await this.getAccount(accountId);
+    if (!account) {
+      throw createError.accountNotFound(accountId);
+    }
+
+    const tokens = await this.getTokens(accountId);
+    if (!tokens?.idToken || !tokens.accessToken) {
+      throw new AccountError(`Tokens missing for account ${account.email}`, {
+        code: ErrorCode.AUTH_TOKEN_MISSING
+      });
+    }
+
+    return {
+      OPENAI_API_KEY: null,
+      tokens: {
+        id_token: tokens.idToken,
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken,
+        account_id: account.accountId ?? tokens.accountId
+      },
+      last_refresh: new Date().toISOString()
+    };
   }
 
   async importSharedAccounts(input: SharedCodexAccountJson | SharedCodexAccountJson[]): Promise<CodexAccountRecord[]> {

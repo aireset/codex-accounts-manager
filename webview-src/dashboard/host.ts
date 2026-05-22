@@ -33,6 +33,8 @@ export function getActionTimeoutMs(action: DashboardActionName): number {
     case "refreshView":
       return 8_000;
     case "details":
+    case "downloadAccountAuthJson":
+    case "copyAccountAuthJson":
     case "reloadPrompt":
     case "reauthorize":
     case "resyncProfile":

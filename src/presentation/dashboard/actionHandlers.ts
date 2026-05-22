@@ -1,3 +1,5 @@
+import * as os from "os";
+import * as path from "path";
 import * as vscode from "vscode";
 import { refreshSingleQuota } from "../../application/accounts/quota";
 import { getDashboardCopy } from "../../application/dashboard/copy";
@@ -103,6 +105,10 @@ async function runDashboardAction(
       return handleOpenExternalUrl(payload);
     case "downloadJsonFile":
       return handleDownloadJsonFile(ctx.context, payload);
+    case "downloadAccountAuthJson":
+      return handleDownloadAccountAuthJson(ctx.context, ctx.repo, account);
+    case "copyAccountAuthJson":
+      return handleCopyAccountAuthJson(ctx.repo, account);
     case "importSharedJson":
       return handleImportSharedJson(ctx.repo, ctx.schedulePublishState, payload, translate);
     case "previewImportSharedJson":
@@ -289,19 +295,81 @@ async function handleDownloadJsonFile(
     return undefined;
   }
 
-  const target = await vscode.window.showSaveDialog({
-    defaultUri: vscode.Uri.joinPath(context.globalStorageUri, defaultName),
-    filters: {
-      JSON: ["json"]
-    },
-    saveLabel: "Save JSON"
-  });
-  if (!target) {
+  try {
+    const target = await vscode.window.showSaveDialog({
+      defaultUri: resolveDownloadDefaultUri(context, defaultName),
+      filters: {
+        JSON: ["json"]
+      },
+      saveLabel: "Save JSON"
+    });
+    if (!target) {
+      return undefined;
+    }
+
+    await vscode.workspace.fs.writeFile(target, Buffer.from(text, "utf8"));
+    void vscode.window.showInformationMessage(`Saved JSON to ${target.fsPath}`);
+    return undefined;
+  } catch (error) {
+    try {
+      await vscode.env.clipboard.writeText(text);
+      void vscode.window.showWarningMessage(
+        `Unable to open the save dialog. The JSON was copied to your clipboard instead.`
+      );
+      return undefined;
+    } catch (clipboardError) {
+      void vscode.window.showErrorMessage(
+        `Unable to save or copy the JSON: ${toFailureMessage(clipboardError)}`
+      );
+      throw clipboardError;
+    }
+  }
+
+  return undefined;
+}
+
+async function handleDownloadAccountAuthJson(
+  context: vscode.ExtensionContext,
+  repo: AccountsRepository,
+  account: CodexAccountRecord | undefined
+) {
+  if (!account) {
     return undefined;
   }
 
-  await vscode.workspace.fs.writeFile(target, Buffer.from(text, "utf8"));
+  const authFile = await repo.exportAccountAuthFile(account.id);
+  const filename = createAccountAuthFilename(account.email);
+  return handleDownloadJsonFile(context, {
+    filename,
+    text: JSON.stringify(authFile, null, 2)
+  });
+}
+
+async function handleCopyAccountAuthJson(repo: AccountsRepository, account: CodexAccountRecord | undefined) {
+  if (!account) {
+    return undefined;
+  }
+
+  const authFile = await repo.exportAccountAuthFile(account.id);
+  await vscode.env.clipboard.writeText(JSON.stringify(authFile, null, 2));
+  void vscode.window.showInformationMessage(`Copied ${account.email} auth.json to the clipboard.`);
   return undefined;
+}
+
+function createAccountAuthFilename(email: string): string {
+  const slug = email
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `${slug || "account"}-auth.json`;
+}
+
+function resolveDownloadDefaultUri(context: vscode.ExtensionContext, filename: string): vscode.Uri {
+  const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  const storageDir = context.globalStorageUri.fsPath;
+  const baseDir = workspaceFolder ?? storageDir ?? os.homedir();
+  return vscode.Uri.file(path.join(baseDir, filename));
 }
 
 async function handleImportSharedJson(

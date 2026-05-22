@@ -267,6 +267,58 @@ describe("AccountsRepository token persistence", () => {
     repo.dispose();
   });
 
+  it("exports a saved account as auth.json", async () => {
+    const secrets = new Map<string, string>();
+    const context = {
+      globalStorageUri: {
+        fsPath: tempDir
+      },
+      secrets: {
+        get: vi.fn(async (key: string) => secrets.get(key)),
+        store: vi.fn(async (key: string, value: string) => {
+          secrets.set(key, value);
+        }),
+        delete: vi.fn(async (key: string) => {
+          secrets.delete(key);
+        })
+      }
+    } as unknown as vscode.ExtensionContext;
+    const storageId = buildAccountStorageId("dev@example.com", "acct_123", undefined);
+    await fs.writeFile(
+      path.join(tempDir, "accounts-index.json"),
+      JSON.stringify({
+        currentAccountId: storageId,
+        accounts: [
+          {
+            id: storageId,
+            email: "dev@example.com",
+            accountName: "Dev",
+            accountId: "acct_123",
+            isActive: true,
+            createdAt: 1,
+            updatedAt: 1
+          }
+        ]
+      }),
+      "utf8"
+    );
+    await context.secrets.store(`codex.account.${storageId}`, JSON.stringify(createTokens("acct_123")));
+
+    const repo = new AccountsRepository(context);
+    const authFile = await repo.exportAccountAuthFile(storageId);
+
+    expect(authFile.OPENAI_API_KEY).toBeNull();
+    expect(authFile.tokens).toMatchObject({
+      id_token: createTokens("acct_123").idToken,
+      access_token: createTokens("acct_123").accessToken,
+      refresh_token: "refresh-token",
+      account_id: "acct_123"
+    });
+    expect(authFile.last_refresh).toEqual(expect.any(String));
+
+    repo.dispose();
+  });
+
   it("does not replace a valid stored access token with an expired Aideck token", async () => {
     const secrets = new Map<string, string>();
     const context = {

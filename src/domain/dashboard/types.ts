@@ -386,6 +386,8 @@ export type DashboardActionName =
   | "copyText"
   | "openExternalUrl"
   | "downloadJsonFile"
+  | "downloadAccountAuthJson"
+  | "copyAccountAuthJson"
   | "previewImportSharedJson"
   | "importSharedJson"
   | "prepareOAuthSession"

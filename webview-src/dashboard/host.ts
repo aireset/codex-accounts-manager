@@ -17,6 +17,7 @@ export const BLOCKING_GLOBAL_ACTIONS = new Set<DashboardActionName>([
   "addAccount",
   "importCurrent",
   "refreshAll",
+  "syncAccounts",
   "batchRefresh",
   "batchResyncProfile",
   "batchRemove",
@@ -32,6 +33,8 @@ export function getActionTimeoutMs(action: DashboardActionName): number {
   switch (action) {
     case "refreshView":
       return 8_000;
+    case "syncAccounts":
+      return 120_000;
     case "details":
     case "downloadAccountAuthJson":
     case "copyAccountAuthJson":

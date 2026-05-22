@@ -20,12 +20,14 @@ export function OverviewSection(props: {
   addPending: boolean;
   importPending: boolean;
   exportAllPending: boolean;
+  syncPending: boolean;
   refreshAllPending: boolean;
   onToggleAutoSwitchLock: () => void;
   onAddAccount: () => void;
   onImportCurrent: () => void;
   onExportAll: () => void;
   onImportAll: () => void;
+  onSyncAccounts: () => void;
   onRefreshAll: () => void;
 }) {
   const { account, copy, settings, now, hasAccounts, privacyMode } = props;
@@ -127,6 +129,9 @@ export function OverviewSection(props: {
           <ActionButton class="toolbar-btn" disabled={props.disabled} onClick={props.onImportAll}>
             {copy.importJson}
           </ActionButton>
+          <ActionButton class="toolbar-btn" pending={props.syncPending} disabled={props.disabled} onClick={props.onSyncAccounts}>
+            {resolveSyncLabel(props.lang)}
+          </ActionButton>
           <ActionButton class="toolbar-btn" pending={props.importPending} disabled={props.disabled} onClick={props.onImportCurrent}>
             {copy.importCurrent}
           </ActionButton>
@@ -142,6 +147,19 @@ export function OverviewSection(props: {
       </div>
     </div>
   );
+}
+
+function resolveSyncLabel(lang: DashboardState["lang"]): string {
+  if (lang === "pt-br") {
+    return "Sincronizar";
+  }
+  if (lang === "zh") {
+    return "同步";
+  }
+  if (lang === "zh-hant") {
+    return "同步";
+  }
+  return "Sync";
 }
 
 function resolveOverviewLabel(key: "subscription" | "workspace", lang: DashboardState["lang"]): string {

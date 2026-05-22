@@ -291,11 +291,13 @@ function App() {
             addPending={prepareOAuthPending}
             importPending={isActionPending("importCurrent")}
             exportAllPending={sharePending}
+            syncPending={isActionPending("syncAccounts")}
             refreshAllPending={isActionPending("refreshAll")}
             onToggleAutoSwitchLock={handleAutoSwitchLock}
             onAddAccount={modals.openAddAccountModal}
             onExportAll={() => sendAction("shareTokens", undefined, { accountIds: snapshot.accounts.map((account) => account.id) })}
             onImportAll={modals.openImportAccountModal}
+            onSyncAccounts={() => sendAction("syncAccounts")}
             onImportCurrent={() => sendAction("importCurrent")}
             onRefreshAll={() => sendAction("refreshAll")}
           />

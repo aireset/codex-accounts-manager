@@ -377,6 +377,7 @@ export type DashboardActionName =
   | "addAccount"
   | "importCurrent"
   | "refreshAll"
+  | "syncAccounts"
   | "refreshAnnouncements"
   | "markAnnouncementRead"
   | "markAllAnnouncementsRead"

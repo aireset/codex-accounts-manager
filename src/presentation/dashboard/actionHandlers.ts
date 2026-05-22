@@ -1,3 +1,4 @@
+import * as fs from "fs/promises";
 import * as os from "os";
 import * as path from "path";
 import * as vscode from "vscode";
@@ -11,6 +12,7 @@ import type {
   DashboardHostMessage
 } from "../../domain/dashboard/types";
 import type { CodexAccountRecord } from "../../core/types";
+import type { SharedCodexAccountJson } from "../../core/types";
 import type { DashboardLanguage } from "../../localization/languages";
 import { AccountsRepository } from "../../storage";
 import { AnnouncementService, type AnnouncementOptions } from "../../services/announcements";
@@ -34,6 +36,7 @@ export type DashboardActionContext = {
 
 const CODEX_BATCH_REFRESH_CONCURRENCY = 1;
 const CODEX_BATCH_REFRESH_DELAY_MS = 300;
+const CODEX_SHARED_SYNC_FILENAME = "codex-accounts-sync.json";
 
 export async function executeDashboardActionMessage(
   ctx: DashboardActionContext,
@@ -81,6 +84,8 @@ async function runDashboardAction(
     case "refreshAll":
       await vscode.commands.executeCommand("codexAccounts.refreshAllQuotas");
       return undefined;
+    case "syncAccounts":
+      return handleSyncAccounts(ctx.repo, ctx.resolveLanguage);
     case "refreshAnnouncements":
       await ctx.announcements.forceRefresh(ctx.getAnnouncementOptions());
       ctx.schedulePublishState();
@@ -354,6 +359,82 @@ async function handleCopyAccountAuthJson(repo: AccountsRepository, account: Code
   await vscode.env.clipboard.writeText(JSON.stringify(authFile, null, 2));
   void vscode.window.showInformationMessage(`Copied ${account.email} auth.json to the clipboard.`);
   return undefined;
+}
+
+async function handleSyncAccounts(
+  repo: AccountsRepository,
+  resolveLanguage: () => DashboardLanguage
+): Promise<undefined> {
+  const syncPath = resolveSharedSyncFilePath();
+  const localAccounts = await repo.listAccounts();
+  const localSharedAccounts = await repo.exportSharedAccounts(localAccounts.map((account) => account.id));
+
+  let mergedAccounts = localSharedAccounts;
+  try {
+    const existingText = await fs.readFile(syncPath, "utf8");
+    const existingJson = parseSharedJsonInput(existingText);
+    mergedAccounts = mergeSharedAccounts(
+      Array.isArray(existingJson) ? existingJson : [existingJson],
+      localSharedAccounts
+    );
+  } catch (error) {
+    if (!isFileNotFoundError(error)) {
+      throw error;
+    }
+  }
+
+  await repo.importSharedAccountsWithSummary(mergedAccounts);
+  await fs.mkdir(path.dirname(syncPath), { recursive: true });
+  await fs.writeFile(syncPath, JSON.stringify(mergedAccounts, null, 2), "utf8");
+  void vscode.window.showInformationMessage(resolveSyncSuccessMessage(resolveLanguage(), mergedAccounts.length, syncPath));
+  return undefined;
+}
+
+function resolveSharedSyncFilePath(): string {
+  if (process.platform === "win32") {
+    const publicDir = process.env["PUBLIC"]?.trim();
+    return path.join(publicDir || path.join(os.homedir(), "Public"), CODEX_SHARED_SYNC_FILENAME);
+  }
+
+  const windowsPublicDir = "/mnt/c/Users/Public";
+  return path.join(windowsPublicDir, CODEX_SHARED_SYNC_FILENAME);
+}
+
+function mergeSharedAccounts(
+  existingAccounts: SharedCodexAccountJson[],
+  localAccounts: SharedCodexAccountJson[]
+): SharedCodexAccountJson[] {
+  const merged = new Map<string, SharedCodexAccountJson>();
+
+  existingAccounts.forEach((account) => {
+    merged.set(resolveSharedAccountKey(account), account);
+  });
+  localAccounts.forEach((account) => {
+    merged.set(resolveSharedAccountKey(account), account);
+  });
+
+  return [...merged.values()];
+}
+
+function resolveSharedAccountKey(account: SharedCodexAccountJson): string {
+  return String(account.id || account.email || JSON.stringify(account.tokens || {}));
+}
+
+function isFileNotFoundError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "ENOENT"
+  );
+}
+
+function resolveSyncSuccessMessage(lang: DashboardLanguage, count: number, syncPath: string): string {
+  if (lang === "pt-br") {
+    return `Sincronizadas ${count} conta(s) usando ${syncPath}.`;
+  }
+
+  return `Synced ${count} account(s) using ${syncPath}.`;
 }
 
 function createAccountAuthFilename(email: string): string {

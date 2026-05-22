@@ -51,20 +51,27 @@ export function SettingsThemeBlock(props: {
   settings: DashboardSettings;
   onChange: (value: DashboardSettings["dashboardTheme"]) => void;
 }) {
-  const zh = props.lang === "zh" || props.lang === "zh-hant";
-  const copy = zh
-    ? {
-        title: "主题",
-        dark: "深色",
-        light: "浅色",
-        auto: "跟随 VS Code"
-      }
-    : {
-        title: "Theme",
-        dark: "Dark",
-        light: "Light",
-        auto: "Follow VS Code"
-      };
+  const copy =
+    props.lang === "zh" || props.lang === "zh-hant"
+      ? {
+          title: "主题",
+          dark: "深色",
+          light: "浅色",
+          auto: "跟随 VS Code"
+        }
+      : props.lang === "pt-br"
+        ? {
+            title: "Tema",
+            dark: "Escuro",
+            light: "Claro",
+            auto: "Seguir VS Code"
+          }
+        : {
+            title: "Theme",
+            dark: "Dark",
+            light: "Light",
+            auto: "Follow VS Code"
+          };
   const options: Array<{ value: DashboardSettings["dashboardTheme"]; label: string }> = [
     { value: "dark", label: copy.dark },
     { value: "light", label: copy.light },

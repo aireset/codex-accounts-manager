@@ -265,8 +265,12 @@ export function resolveSubscriptionDisplay(
   const diffMs = timestampMs - Date.now();
   const dateText = formatSubscriptionDate(new Date(timestampMs));
   const days = Math.max(0, Math.ceil(diffMs / 86_400_000));
-  const dayUnit = lang === "zh-hant" || lang === "zh" ? "天" : "d";
-  const text = lang === "zh" || lang === "zh-hant" ? `${dateText}（${days} ${dayUnit}）` : `${dateText} (${days}${dayUnit})`;
+  const text =
+    lang === "zh" || lang === "zh-hant"
+      ? `${dateText}（${days} 天）`
+      : lang === "pt-br"
+        ? `${dateText} (${days} dia${days === 1 ? "" : "s"})`
+        : `${dateText} (${days}d)`;
   const color = diffMs <= 3 * 86_400_000 ? "#ef4444" : diffMs <= 10 * 86_400_000 ? "#f59e0b" : "var(--accent-green)";
 
   return {
@@ -314,8 +318,15 @@ function formatCreditsText(credits: CodexCreditsSummary | undefined, lang: Dashb
   }
 
   const zh = lang === "zh" || lang === "zh-hant";
-  const value = credits.unlimited ? (zh ? "无限" : "Unlimited") : credits.balance || (credits.hasCredits ? (zh ? "可用" : "Available") : "0");
-  const label = zh ? "剩余额度" : "Credits left";
+  const ptBr = lang === "pt-br";
+  const value = credits.unlimited
+    ? zh
+      ? "无限"
+      : ptBr
+        ? "Ilimitado"
+        : "Unlimited"
+    : credits.balance || (credits.hasCredits ? (zh ? "可用" : ptBr ? "Disponível" : "Available") : "0");
+  const label = zh ? "剩余额度" : ptBr ? "Créditos restantes" : "Credits left";
   return `${label}: ${value}`;
 }
 
@@ -436,17 +447,17 @@ function formatAddMethod(value: string | undefined, lang: DashboardState["lang"]
   const zh = lang === "zh" || lang === "zh-hant";
   switch (normalized) {
     case "local":
-      return zh ? "本地导入" : "Local import";
+      return zh ? "本地导入" : lang === "pt-br" ? "Importação local" : "Local import";
     case "json":
-      return zh ? "JSON导入" : "JSON import";
+      return zh ? "JSON导入" : lang === "pt-br" ? "Importação de JSON" : "JSON import";
     case "oauth":
-      return zh ? "OAuth授权" : "OAuth";
+      return zh ? "OAuth授权" : lang === "pt-br" ? "OAuth" : "OAuth";
     case "token":
-      return zh ? "Token导入" : "Token import";
+      return zh ? "Token导入" : lang === "pt-br" ? "Importação de token" : "Token import";
     case "apikey":
-      return zh ? "API Key导入" : "API key import";
+      return zh ? "API Key导入" : lang === "pt-br" ? "Importação de chave API" : "API key import";
     default:
-      return zh ? "未知来源" : "Unknown source";
+      return zh ? "未知来源" : lang === "pt-br" ? "Origem desconhecida" : "Unknown source";
   }
 }
 

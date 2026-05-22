@@ -461,6 +461,9 @@ function resolveAboutTitle(lang: string): string {
   if (lang === "zh-hant") {
     return "關於";
   }
+  if (lang === "pt-br") {
+    return "Sobre";
+  }
   return "About";
 }
 

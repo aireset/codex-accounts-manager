@@ -149,6 +149,7 @@ export interface DashboardCopy {
   teamName: string;
   login: string;
   switchBtn: string;
+  switchRestartExtensionHostBtn: string;
   refreshBtn: string;
   detailsBtn: string;
   removeBtn: string;
@@ -407,6 +408,7 @@ export type DashboardActionName =
   | "dismissHealthIssue"
   | "details"
   | "switch"
+  | "switchRestartExtensionHost"
   | "refresh"
   | "remove"
   | "toggleStatusBar";

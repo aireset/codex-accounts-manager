@@ -171,6 +171,11 @@ async function runDashboardAction(
         await vscode.commands.executeCommand("codexAccounts.switchAccount", account);
       }
       return undefined;
+    case "switchRestartExtensionHost":
+      if (account) {
+        await vscode.commands.executeCommand("codexAccounts.switchAccountRestartExtensionHost", account);
+      }
+      return undefined;
     case "refresh":
       if (account) {
         await vscode.commands.executeCommand("codexAccounts.refreshQuota", account);
@@ -393,7 +398,7 @@ async function handleSyncAccounts(
 function resolveSharedSyncFilePath(): string {
   if (process.platform === "win32") {
     const publicDir = process.env["PUBLIC"]?.trim();
-    return path.join(publicDir || path.join(os.homedir(), "Public"), CODEX_SHARED_SYNC_FILENAME);
+    return path.join(publicDir ?? path.join(os.homedir(), "Public"), CODEX_SHARED_SYNC_FILENAME);
   }
 
   const windowsPublicDir = "/mnt/c/Users/Public";
@@ -417,7 +422,7 @@ function mergeSharedAccounts(
 }
 
 function resolveSharedAccountKey(account: SharedCodexAccountJson): string {
-  return String(account.id || account.email || JSON.stringify(account.tokens || {}));
+  return String(account.id ?? account.email ?? JSON.stringify(account.tokens ?? {}));
 }
 
 function isFileNotFoundError(error: unknown): boolean {

@@ -350,6 +350,7 @@ function App() {
                   busy={isAccountBusy(account.id)}
                   reloadPromptPending={isActionPending("reloadPrompt", account.id)}
                   switchPending={isActionPending("switch", account.id)}
+                  switchRestartExtensionHostPending={isActionPending("switchRestartExtensionHost", account.id)}
                   reauthorizePending={isActionPending("reauthorize", account.id)}
                   resyncProfilePending={isActionPending("resyncProfile", account.id)}
                   refreshPending={isActionPending("refresh", account.id)}

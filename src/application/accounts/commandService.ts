@@ -203,6 +203,33 @@ export class AccountsCommandService {
     }
   }
 
+  async switchAccountRestartExtensionHost(item?: CodexAccountRecord): Promise<void> {
+    const copy = getCommandCopy();
+    const account = item ?? (await this.pickSwitchAccount(copy.pickActivateAccount));
+    if (!account) {
+      return;
+    }
+
+    if (account.isActive) {
+      void vscode.window.showInformationMessage(copy.alreadyActive(formatAccountToastLabel(account)));
+      return;
+    }
+
+    await this.withProgress(copy.progressSwitch(account.email), async () => {
+      await this.repo.switchAccount(account.id);
+    });
+    this.view.markObservedAuthIdentity?.(account.id);
+
+    await this.handleCodexAppRestartPreference();
+    this.view.refresh();
+
+    try {
+      await vscode.commands.executeCommand("workbench.action.restartExtensionHost");
+    } catch (error) {
+      void vscode.window.showErrorMessage(`Unable to restart the VS Code extension host: ${getErrorMessage(error)}`);
+    }
+  }
+
   async refreshQuota(item?: CodexAccountRecord): Promise<void> {
     const copy = getCommandCopy();
     const account = item ?? (await this.pickAccount(copy.pickRefreshAccount));

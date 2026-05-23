@@ -21,6 +21,9 @@ export function registerCommands(
       service.reauthorizeAccount(item)
     ),
     vscode.commands.registerCommand("codexAccounts.switchAccount", (item?: CodexAccountRecord) => service.switchAccount(item)),
+    vscode.commands.registerCommand("codexAccounts.switchAccountRestartExtensionHost", (item?: CodexAccountRecord) =>
+      service.switchAccountRestartExtensionHost(item)
+    ),
     vscode.commands.registerCommand("codexAccounts.refreshQuota", (item?: CodexAccountRecord) => service.refreshQuota(item)),
     vscode.commands.registerCommand("codexAccounts.refreshAllQuotas", (options?: { silent?: boolean }) => service.refreshAllQuotas(options)),
     vscode.commands.registerCommand("codexAccounts.restoreAccountsFromBackup", () => service.restoreAccountsFromBackup()),

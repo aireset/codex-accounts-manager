@@ -2,7 +2,7 @@
   "name": "codex-accounts-manager",
   "displayName": "Gerenciador de Contas Codex",
   "description": "Gerencie várias contas Codex no VS Code, consulte cotas e alterne o auth.json global ativo.",
-  "version": "0.1.16",
+  "version": "0.1.19",
   "publisher": "wannanbigpig",
   "icon": "media/CT_logo_transparent_square_hd.png",
   "license": "MIT",
@@ -171,6 +171,10 @@
       {
         "command": "codexAccounts.switchAccount",
         "title": "Contas Codex: Alternar conta"
+      },
+      {
+        "command": "codexAccounts.switchAccountRestartExtensionHost",
+        "title": "Contas Codex: Alternar conta e reiniciar extensões"
       },
       {
         "command": "codexAccounts.refreshQuota",

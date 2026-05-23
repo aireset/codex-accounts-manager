@@ -94,6 +94,7 @@ export function SavedAccountCard(props: {
   busy: boolean;
   reloadPromptPending: boolean;
   switchPending: boolean;
+  switchRestartExtensionHostPending: boolean;
   reauthorizePending: boolean;
   resyncProfilePending: boolean;
   refreshPending: boolean;
@@ -110,6 +111,7 @@ export function SavedAccountCard(props: {
     action:
       | "details"
       | "switch"
+      | "switchRestartExtensionHost"
       | "reloadPrompt"
       | "reauthorize"
       | "resyncProfile"
@@ -253,6 +255,7 @@ export function SavedAccountCard(props: {
               <ActionButton icon={renderResyncProfileIcon()} iconOnly label={resyncButtonLabel} pending={props.resyncProfilePending} disabled={props.busy} onClick={() => onAction("resyncProfile", account.id)} />
             ) : null}
             <ActionButton icon={renderSwitchIcon()} iconOnly label={copy.switchBtn} pending={props.switchPending} disabled={props.busy} onClick={() => onAction("switch", account.id)} />
+            <ActionButton icon={renderReloadIcon()} iconOnly label={copy.switchRestartExtensionHostBtn} pending={props.switchRestartExtensionHostPending} disabled={props.busy} onClick={() => onAction("switchRestartExtensionHost", account.id)} />
             <ActionButton icon={renderRefreshIcon()} iconOnly label={copy.refreshBtn} pending={props.refreshPending} disabled={props.busy} onClick={() => onAction("refresh", account.id)} />
             <ActionButton icon={<CopyIcon />} iconOnly label={copy.copyJson} pending={props.copyPending} disabled={props.busy} onClick={() => onAction("copyAccountAuthJson", account.id)} />
             <ActionButton icon={<DownloadIcon />} iconOnly label={copy.downloadJson} pending={props.downloadPending} disabled={props.busy} onClick={() => onAction("downloadAccountAuthJson", account.id)} />

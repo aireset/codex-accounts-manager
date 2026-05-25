@@ -219,15 +219,16 @@ export class AccountsCommandService {
       await this.repo.switchAccount(account.id);
     });
     this.view.markObservedAuthIdentity?.(account.id);
-
-    await this.handleCodexAppRestartPreference();
     this.view.refresh();
 
-    try {
-      await vscode.commands.executeCommand("workbench.action.restartExtensionHost");
-    } catch (error) {
-      void vscode.window.showErrorMessage(`Unable to restart the VS Code extension host: ${getErrorMessage(error)}`);
+    if (vscode.env.remoteName === "wsl") {
+      await this.promptReloadFallback(
+        "WSL cannot reliably restart only the built-in Codex runtime without reconnecting the remote window."
+      );
+      return;
     }
+
+    this.restartExtensionHostSoon();
   }
 
   async refreshQuota(item?: CodexAccountRecord): Promise<void> {
@@ -465,6 +466,28 @@ export class AccountsCommandService {
     const manualChoice = await vscode.window.showInformationMessage(copy.manualMessage, copy.restartNow, copy.later);
     if (manualChoice === copy.restartNow) {
       await restartCodexAppIfInstalled();
+    }
+  }
+
+  private restartExtensionHostSoon(): void {
+    setTimeout(() => {
+      void vscode.commands.executeCommand("workbench.action.restartExtensionHost").then(
+        () => undefined,
+        (error) => {
+          void this.promptReloadFallback(getErrorMessage(error));
+        }
+      );
+    }, 1000);
+  }
+
+  private async promptReloadFallback(reason?: string): Promise<void> {
+    const copy = getCommandCopy();
+    const message = reason
+      ? `Unable to restart the active Codex runtime automatically: ${reason}`
+      : "Unable to restart the active Codex runtime automatically.";
+    const choice = await vscode.window.showWarningMessage(message, copy.reloadNow, copy.later);
+    if (choice === copy.reloadNow) {
+      await vscode.commands.executeCommand("workbench.action.reloadWindow");
     }
   }
 

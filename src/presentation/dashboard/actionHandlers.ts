@@ -203,8 +203,8 @@ async function handleShareTokens(
 ) {
   try {
     const accountIds = payload?.accountIds ?? [];
-    const shared = await repo.exportSharedAccounts(accountIds);
-    if (shared.length === 0) {
+    const exportPayload = await repo.exportOmniRouteAuthImport(accountIds);
+    if (exportPayload.entries.length === 0) {
       const message = translate("message.shareTokensFailed", { message: "No accounts selected" });
       void vscode.window.showErrorMessage(message);
       throw new Error(message);
@@ -212,11 +212,11 @@ async function handleShareTokens(
 
     void vscode.window.showInformationMessage(
       translate("message.shareTokensReady", {
-        count: shared.length
+        count: exportPayload.entries.length
       })
     );
     return {
-      sharedJson: JSON.stringify(shared, null, 2)
+      sharedJson: JSON.stringify(exportPayload, null, 2)
     };
   } catch (error) {
     const message = translate("message.shareTokensFailed", {

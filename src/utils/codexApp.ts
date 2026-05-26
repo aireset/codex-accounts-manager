@@ -40,6 +40,7 @@ const MAC_PROCESS_CANDIDATES = ["Codex", "OpenAI Codex"];
 const WINDOWS_PROCESS_CANDIDATES = ["Codex.exe"];
 const LINUX_PROCESS_CANDIDATES = ["codex"];
 const CODEX_APP_PATH_CACHE_TTL_MS = 30_000;
+const CODEX_APP_RESTART_STOP_DELAY_MS = 2_500;
 
 let launchPathCache:
   | {
@@ -56,7 +57,7 @@ export async function restartCodexAppIfInstalled(): Promise<boolean> {
   }
 
   await forceStopCodexProcesses();
-  await delay(800);
+  await delay(CODEX_APP_RESTART_STOP_DELAY_MS);
   await launchCodexApp(state.launcherPath);
   return true;
 }

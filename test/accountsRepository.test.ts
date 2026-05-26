@@ -319,6 +319,91 @@ describe("AccountsRepository token persistence", () => {
     repo.dispose();
   });
 
+  it("exports saved accounts as OmniRoute Codex bulk import JSON", async () => {
+    const secrets = new Map<string, string>();
+    const context = {
+      globalStorageUri: {
+        fsPath: tempDir
+      },
+      secrets: {
+        get: vi.fn(async (key: string) => secrets.get(key)),
+        store: vi.fn(async (key: string, value: string) => {
+          secrets.set(key, value);
+        }),
+        delete: vi.fn(async (key: string) => {
+          secrets.delete(key);
+        })
+      }
+    } as unknown as vscode.ExtensionContext;
+    const firstId = buildAccountStorageId("dev@example.com", "acct_123", undefined);
+    const secondId = buildAccountStorageId("ops@example.com", "acct_456", undefined);
+
+    await fs.writeFile(
+      path.join(tempDir, "accounts-index.json"),
+      JSON.stringify({
+        currentAccountId: firstId,
+        accounts: [
+          {
+            id: firstId,
+            email: "dev@example.com",
+            accountName: "Dev Workspace",
+            accountId: "acct_123",
+            isActive: true,
+            createdAt: 1,
+            updatedAt: 1
+          },
+          {
+            id: secondId,
+            email: "ops@example.com",
+            accountName: "Ops Workspace",
+            accountId: "acct_456",
+            isActive: false,
+            createdAt: 2,
+            updatedAt: 2
+          }
+        ]
+      }),
+      "utf8"
+    );
+
+    await context.secrets.store(`codex.account.${firstId}`, JSON.stringify(createTokens("acct_123")));
+    await context.secrets.store(`codex.account.${secondId}`, JSON.stringify(createTokens("acct_456")));
+
+    const repo = new AccountsRepository(context);
+    const exportFile = await repo.exportOmniRouteAuthImport([firstId, secondId]);
+
+    expect(exportFile.overwriteExisting).toBe(false);
+    expect(exportFile.entries).toHaveLength(2);
+    expect(exportFile.entries[0]).toMatchObject({
+      name: "Dev Workspace",
+      email: "dev@example.com",
+      json: {
+        OPENAI_API_KEY: null,
+        tokens: {
+          id_token: createTokens("acct_123").idToken,
+          access_token: createTokens("acct_123").accessToken,
+          refresh_token: createTokens("acct_123").refreshToken,
+          account_id: "acct_123"
+        }
+      }
+    });
+    expect(exportFile.entries[1]).toMatchObject({
+      name: "Ops Workspace",
+      email: "ops@example.com",
+      json: {
+        OPENAI_API_KEY: null,
+        tokens: {
+          id_token: createTokens("acct_456").idToken,
+          access_token: createTokens("acct_456").accessToken,
+          refresh_token: createTokens("acct_456").refreshToken,
+          account_id: "acct_456"
+        }
+      }
+    });
+
+    repo.dispose();
+  });
+
   it("does not replace a valid stored access token with an expired Aideck token", async () => {
     const secrets = new Map<string, string>();
     const context = {

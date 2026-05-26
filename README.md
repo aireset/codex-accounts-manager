@@ -4,7 +4,7 @@
 
 Extensão do VS Code para gerenciar várias contas Codex, visualizar cotas e alternar o `auth.json` global ativo.
 
-![Version](https://img.shields.io/badge/version-0.1.10-blue)
+![Version](https://img.shields.io/badge/version-0.1.26-blue)
 ![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.96.0-007acc)
 ![License](https://img.shields.io/github/license/wannanbigpig/codex-tools)
 ![Stars](https://img.shields.io/github/stars/wannanbigpig/codex-tools?style=flat)
@@ -239,8 +239,15 @@ Pressione `F5` no VS Code para abrir um Extension Development Host.
 ## Empacotar VSIX
 
 ```bash
-npx @vscode/vsce package
+npm run package
 ```
+
+Fluxo de release/local final deste repositório:
+
+1. Atualize a versão em `package.json`
+2. Rode `npm run package`
+3. O comando gera o arquivo versionado `codex-accounts-manager-x.y.z.vsix`
+4. Em seguida, o script `scripts/createStableVsix.js` copia esse build e substitui `codex-accounts-manager.vsix`
 
 ---
 

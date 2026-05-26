@@ -248,6 +248,17 @@ export interface CodexAuthFile {
   last_refresh?: string;
 }
 
+export interface OmniRouteCodexAuthImportEntry {
+  json: CodexAuthFile;
+  name?: string;
+  email?: string;
+}
+
+export interface OmniRouteCodexAuthImportFile {
+  entries: OmniRouteCodexAuthImportEntry[];
+  overwriteExisting?: boolean;
+}
+
 /**
  * 解码后的认证声明
  */

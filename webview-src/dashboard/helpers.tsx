@@ -12,7 +12,7 @@ export function createShareFileName(): string {
   const hour = String(now.getHours()).padStart(2, "0");
   const minute = String(now.getMinutes()).padStart(2, "0");
   const second = String(now.getSeconds()).padStart(2, "0");
-  return `codex-accounts-share-${year}${month}${day}-${hour}${minute}${second}.json`;
+  return `omniroute-codex-auth-import-${year}${month}${day}-${hour}${minute}${second}.json`;
 }
 
 export function maskSharedJson(raw: string): string {

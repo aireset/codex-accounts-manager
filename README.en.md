@@ -4,7 +4,7 @@ English · [简体中文](README.md)
 
 VS Code extension for managing multiple Codex accounts, viewing quota usage, and switching the active global `auth.json`.
 
-![Version](https://img.shields.io/badge/version-0.1.9-blue)
+![Version](https://img.shields.io/badge/version-0.1.26-blue)
 ![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.96.0-007acc)
 ![License](https://img.shields.io/github/license/wannanbigpig/codex-tools)
 ![Stars](https://img.shields.io/github/stars/wannanbigpig/codex-tools?style=flat)
@@ -201,8 +201,15 @@ Press `F5` in VS Code to launch an Extension Development Host.
 ## Package VSIX
 
 ```bash
-npx @vscode/vsce package
+npm run package
 ```
+
+Final release flow for this repository:
+
+1. Update the version in `package.json`
+2. Run `npm run package`
+3. The command generates the versioned file `codex-accounts-manager-x.y.z.vsix`
+4. Then `scripts/createStableVsix.js` copies that build and replaces `codex-accounts-manager.vsix`
 
 ---
 

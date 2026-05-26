@@ -42,11 +42,13 @@ export function getActionTimeoutMs(action: DashboardActionName): number {
     case "reauthorize":
     case "resyncProfile":
     case "dismissHealthIssue":
-    case "switch":
     case "refresh":
     case "remove":
     case "toggleStatusBar":
       return 30_000;
+    case "switch":
+    case "switchRestartExtensionHost":
+      return 60_000;
     case "refreshAnnouncements":
     case "markAnnouncementRead":
     case "markAllAnnouncementsRead":

@@ -70,6 +70,7 @@ import {
   CodexIndexHealthSummary,
   CodexQuotaSummary,
   CodexTokens,
+  OmniRouteCodexAuthImportFile,
   SharedCodexAccountJson
 } from "../core/types";
 import { fetchRemoteAccountProfile } from "../services/profile";
@@ -580,6 +581,34 @@ export class AccountsRepository {
         account_id: account.accountId ?? tokens.accountId
       },
       last_refresh: new Date().toISOString()
+    };
+  }
+
+  async exportOmniRouteAuthImport(accountIds: string[]): Promise<OmniRouteCodexAuthImportFile> {
+    const uniqueIds = Array.from(new Set(accountIds));
+    if (uniqueIds.length === 0) {
+      return {
+        entries: [],
+        overwriteExisting: false
+      };
+    }
+
+    const index = await this.readIndex();
+    const accounts = index.accounts.filter((account) => uniqueIds.includes(account.id));
+    const entries = await Promise.all(
+      accounts.map(async (account) => {
+        const trimmedName = account.accountName?.trim();
+        return {
+          json: await this.exportAccountAuthFile(account.id),
+          name: trimmedName && trimmedName.length > 0 ? trimmedName : account.email,
+          email: account.email
+        };
+      })
+    );
+
+    return {
+      entries,
+      overwriteExisting: false
     };
   }
 

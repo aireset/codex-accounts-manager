@@ -29,7 +29,7 @@ const en: DashboardCopy = {
   refreshAll: "Refresh All Quotas",
   shareToken: "Share Token",
   shareTokenDisabledTip: "Select at least one account before sharing",
-  shareTokenModeHint: "Current export mode: full account package",
+  shareTokenModeHint: "Current export mode: OmniRoute Codex bulk import JSON",
   dashboardTitle: "Codex Accounts Manager · Quota Dashboard",
   dashboardSub: "Primary dashboard for monitoring, management, and screenshots",
   empty: "No saved accounts yet",
@@ -826,7 +826,7 @@ export const dashboardCopyResources = defineLocaleResources(en, {
   
     "githubProject": "Projeto no GitHub",
     "githubProjectTip": "Se você gostou, deixe uma estrela no GitHub.",
-    "shareTokenModeHint": "Modo atual de exportação: pacote completo da conta",
+    "shareTokenModeHint": "Modo atual de exportação: JSON de importação em lote do Codex no OmniRoute",
     "primaryAccount": "Principal",
     "reloadBtn": "Recarregar",
     "cancelOauthConfirm": "A autorização ainda está em andamento. Fechar este diálogo e cancelar a autorização atual?",

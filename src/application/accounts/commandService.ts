@@ -1,4 +1,5 @@
 import * as path from "path";
+import { setTimeout as delay } from "timers/promises";
 import * as vscode from "vscode";
 import { loginWithOAuth } from "../../auth";
 import { getCodexHome } from "../../codex";
@@ -36,6 +37,8 @@ const REFRESH_ALL_SILENT_CONCURRENCY = 1;
 const REFRESH_ALL_MANUAL_CONCURRENCY = 2;
 const REFRESH_ALL_SILENT_DELAY_MS = 300;
 const REFRESH_ALL_MANUAL_DELAY_MS = 150;
+const SWITCH_AND_RESTART_PROPAGATION_DELAY_MS = 2_000;
+const SWITCH_AND_RESTART_EXTENSION_DELAY_MS = 4_000;
 
 export class AccountsCommandService {
   constructor(
@@ -228,6 +231,7 @@ export class AccountsCommandService {
       return;
     }
 
+    await delay(SWITCH_AND_RESTART_PROPAGATION_DELAY_MS);
     this.restartExtensionHostSoon();
   }
 
@@ -477,7 +481,7 @@ export class AccountsCommandService {
           void this.promptReloadFallback(getErrorMessage(error));
         }
       );
-    }, 1000);
+    }, SWITCH_AND_RESTART_EXTENSION_DELAY_MS);
   }
 
   private async promptReloadFallback(reason?: string): Promise<void> {

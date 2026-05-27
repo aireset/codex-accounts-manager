@@ -572,4 +572,62 @@ describe("AccountsRepository token persistence", () => {
 
     repo.dispose();
   });
+
+  it("exports auth.json arrays for the selected accounts", async () => {
+    const secrets = new Map<string, string>();
+    const context = {
+      globalStorageUri: {
+        fsPath: tempDir
+      },
+      secrets: {
+        get: vi.fn(async (key: string) => secrets.get(key)),
+        store: vi.fn(async (key: string, value: string) => {
+          secrets.set(key, value);
+        }),
+        delete: vi.fn(async (key: string) => {
+          secrets.delete(key);
+        })
+      }
+    } as unknown as vscode.ExtensionContext;
+    await fs.writeFile(
+      path.join(tempDir, "accounts-index.json"),
+      JSON.stringify({
+        currentAccountId: "account-1",
+        accounts: [
+          {
+            id: "account-1",
+            email: "first@example.com",
+            accountName: "First",
+            accountId: "acct_1",
+            isActive: true,
+            createdAt: 1,
+            updatedAt: 1
+          },
+          {
+            id: "account-2",
+            email: "second@example.com",
+            accountName: "Second",
+            accountId: "acct_2",
+            isActive: false,
+            createdAt: 2,
+            updatedAt: 2
+          }
+        ]
+      }),
+      "utf8"
+    );
+    await context.secrets.store(`codex.account.account-1`, JSON.stringify(createTokens("acct_1")));
+    await context.secrets.store(`codex.account.account-2`, JSON.stringify(createTokens("acct_2")));
+
+    const repo = new AccountsRepository(context);
+    const exported = await repo.exportAuthJsonArray(["account-1", "account-2"]);
+
+    expect(exported).toHaveLength(2);
+    expect(exported[0]?.tokens.account_id).toBe("acct_1");
+    expect(exported[1]?.tokens.account_id).toBe("acct_2");
+    expect(exported[0]?.OPENAI_API_KEY).toBeNull();
+    expect(exported[1]?.OPENAI_API_KEY).toBeNull();
+
+    repo.dispose();
+  });
 });

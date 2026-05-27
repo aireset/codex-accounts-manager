@@ -100,6 +100,8 @@ async function runDashboardAction(
       return undefined;
     case "shareTokens":
       return handleShareTokens(ctx.repo, payload, translate);
+    case "shareAuthList":
+      return handleShareAuthList(ctx.repo, payload, translate);
     case "restoreFromBackup":
       return handleRestoreFromBackup(ctx.repo, ctx.schedulePublishState, translate);
     case "restoreFromAuthJson":
@@ -217,6 +219,37 @@ async function handleShareTokens(
     );
     return {
       sharedJson: JSON.stringify(exportPayload, null, 2)
+    };
+  } catch (error) {
+    const message = translate("message.shareTokensFailed", {
+      message: toFailureMessage(error)
+    });
+    void vscode.window.showErrorMessage(message);
+    throw new Error(message);
+  }
+}
+
+async function handleShareAuthList(
+  repo: AccountsRepository,
+  payload: DashboardActionPayload | undefined,
+  translate: ReturnType<typeof t>
+) {
+  try {
+    const accountIds = payload?.accountIds ?? [];
+    const authEntries = await repo.exportAuthJsonArray(accountIds);
+    if (authEntries.length === 0) {
+      const message = translate("message.shareTokensFailed", { message: "No accounts selected" });
+      void vscode.window.showErrorMessage(message);
+      throw new Error(message);
+    }
+
+    void vscode.window.showInformationMessage(
+      translate("message.shareTokensReady", {
+        count: authEntries.length
+      })
+    );
+    return {
+      authJson: JSON.stringify(authEntries, null, 2)
     };
   } catch (error) {
     const message = translate("message.shareTokensFailed", {

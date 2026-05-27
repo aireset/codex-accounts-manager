@@ -116,6 +116,7 @@ function App() {
   const restoreBackupPending = isActionPending("restoreFromBackup");
   const restoreAuthPending = isActionPending("restoreFromAuthJson");
   const sharePending = isActionPending("shareTokens");
+  const shareAuthPending = isActionPending("shareAuthList");
   const downloadSharePending = isActionPending("downloadJsonFile");
   const batchRefreshPending = isActionPending("batchRefresh");
   const batchResyncPending = isActionPending("batchResyncProfile");
@@ -138,6 +139,13 @@ function App() {
       return;
     }
     sendAction("shareTokens", undefined, { accountIds: state.selectedAccountIds });
+  };
+
+  const handleShareAuthList = (): void => {
+    if (!selectedCount) {
+      return;
+    }
+    sendAction("shareAuthList", undefined, { accountIds: state.selectedAccountIds });
   };
 
   const handleEditAccountTags = (account: DashboardAccountViewModel): void => {
@@ -291,11 +299,15 @@ function App() {
             addPending={prepareOAuthPending}
             importPending={isActionPending("importCurrent")}
             exportAllPending={sharePending}
+            exportAuthPending={shareAuthPending}
             syncPending={isActionPending("syncAccounts")}
             refreshAllPending={isActionPending("refreshAll")}
             onToggleAutoSwitchLock={handleAutoSwitchLock}
             onAddAccount={modals.openAddAccountModal}
             onExportAll={() => sendAction("shareTokens", undefined, { accountIds: snapshot.accounts.map((account) => account.id) })}
+            onExportAuthList={() =>
+              sendAction("shareAuthList", undefined, { accountIds: snapshot.accounts.map((account) => account.id) })
+            }
             onImportAll={modals.openImportAccountModal}
             onSyncAccounts={() => sendAction("syncAccounts")}
             onImportCurrent={() => sendAction("importCurrent")}
@@ -327,11 +339,13 @@ function App() {
                   resyncPending={batchResyncPending}
                   removePending={batchRemovePending}
                   sharePending={sharePending}
+                  shareAuthPending={shareAuthPending}
                   tagsPending={batchTagsPending}
                   onRefresh={() => sendAction("batchRefresh", undefined, { accountIds: state.selectedAccountIds })}
                   onResync={() => sendAction("batchResyncProfile", undefined, { accountIds: state.selectedAccountIds })}
                   onRemove={() => sendAction("batchRemove", undefined, { accountIds: state.selectedAccountIds })}
                   onShare={handleShareTokens}
+                  onShareAuth={handleShareAuthList}
                   onAddTags={() => handleBatchTagMutation("add")}
                   onRemoveTags={() => handleBatchTagMutation("remove")}
                 />
@@ -448,6 +462,7 @@ function App() {
       <ShareTokenModal
         open={modals.shareModalOpen}
         copy={snapshot.copy}
+        mode={modals.shareModalMode}
         selectedCount={selectedCount}
         shareModalJson={modals.shareModalJson}
         sharePreviewExpanded={modals.sharePreviewExpanded}

@@ -71,10 +71,12 @@ export function BatchSelectionBar(props: {
   resyncPending: boolean;
   removePending: boolean;
   sharePending: boolean;
+  shareAuthPending: boolean;
   onRefresh: () => void;
   onResync: () => void;
   onRemove: () => void;
   onShare: () => void;
+  onShareAuth: () => void;
   onAddTags: () => void;
   onRemoveTags: () => void;
 }) {
@@ -95,6 +97,9 @@ export function BatchSelectionBar(props: {
         </ActionButton>
         <ActionButton class="toolbar-btn" pending={props.sharePending} onClick={props.onShare}>
           {props.copy.batchExportBtn}
+        </ActionButton>
+        <ActionButton class="toolbar-btn" pending={props.shareAuthPending} onClick={props.onShareAuth}>
+          {props.copy.batchExportAuthBtn}
         </ActionButton>
         <ActionButton class="toolbar-btn" pending={props.removePending} onClick={props.onRemove}>
           {props.copy.batchRemoveBtn}

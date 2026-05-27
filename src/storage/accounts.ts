@@ -584,6 +584,18 @@ export class AccountsRepository {
     };
   }
 
+  async exportAuthJsonArray(accountIds: string[]): Promise<CodexAuthFile[]> {
+    const uniqueIds = Array.from(new Set(accountIds));
+    if (uniqueIds.length === 0) {
+      return [];
+    }
+
+    const index = await this.readIndex();
+    const accounts = index.accounts.filter((account) => uniqueIds.includes(account.id));
+
+    return Promise.all(accounts.map((account) => this.exportAccountAuthFile(account.id)));
+  }
+
   async exportOmniRouteAuthImport(accountIds: string[]): Promise<OmniRouteCodexAuthImportFile> {
     const uniqueIds = Array.from(new Set(accountIds));
     if (uniqueIds.length === 0) {

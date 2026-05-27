@@ -1,7 +1,7 @@
 import type { DashboardCopy, DashboardOAuthSessionDescriptor } from "../../src/domain/dashboard/types";
 import type { CodexImportPreviewSummary, CodexImportResultSummary } from "../../src/core/types";
 import { ImportPreviewPanel, ImportResultPanel, ModalShell } from "./components";
-import { createShareFileName, formatTemplate, maskSharedJson } from "./helpers";
+import { createAuthListFileName, createShareFileName, formatTemplate, maskSharedJson } from "./helpers";
 import { CopyIcon, DownloadIcon, EyeIcon, EyeOffIcon, GlobeIcon, ImportIcon, SuccessIcon } from "./icons";
 
 const IMPORT_SINGLE_EXAMPLE = `{
@@ -253,6 +253,7 @@ export function ConfirmCancelOauthModal(props: {
 export function ShareTokenModal(props: {
   open: boolean;
   copy: DashboardCopy;
+  mode: "shared" | "auth";
   selectedCount: number;
   shareModalJson: string;
   sharePreviewExpanded: boolean;
@@ -263,28 +264,34 @@ export function ShareTokenModal(props: {
   onCopyJson: () => void;
   onDownloadJson: (filename: string, text: string) => void;
 }) {
-  const previewValue = props.sharePreviewExpanded ? props.shareModalJson : maskSharedJson(props.shareModalJson);
+  const previewValue =
+    props.mode === "auth" || props.sharePreviewExpanded ? props.shareModalJson : maskSharedJson(props.shareModalJson);
+  const title = props.mode === "auth" ? props.copy.shareAuthListModalTitle : props.copy.shareTokenModalTitle;
+  const hint = props.mode === "auth" ? props.copy.shareAuthListModeHint : props.copy.shareTokenModeHint;
+  const filename = props.mode === "auth" ? createAuthListFileName() : createShareFileName();
 
   return (
     <ModalShell
       open={props.open}
-      title={props.copy.shareTokenModalTitle}
+      title={title}
       closeLabel={props.copy.closeModal}
       className="dashboard-modal-wide"
       onClose={props.onClose}
     >
       <div class="modal-stack">
         <div class="modal-toolbar">
-          <button
-            class={`modal-toolbar-btn ${props.sharePreviewExpanded ? "active" : ""}`}
-            type="button"
-            onClick={props.onTogglePreview}
-          >
-            <span class="modal-btn-icon" aria-hidden="true">
-              {props.sharePreviewExpanded ? <EyeOffIcon /> : <EyeIcon />}
-            </span>
-            {props.copy.jsonPreview}
-          </button>
+          {props.mode === "shared" ? (
+            <button
+              class={`modal-toolbar-btn ${props.sharePreviewExpanded ? "active" : ""}`}
+              type="button"
+              onClick={props.onTogglePreview}
+            >
+              <span class="modal-btn-icon" aria-hidden="true">
+                {props.sharePreviewExpanded ? <EyeOffIcon /> : <EyeIcon />}
+              </span>
+              {props.copy.jsonPreview}
+            </button>
+          ) : null}
           <button
             class={`modal-toolbar-btn ${props.copyFeedbackKey === "share-json" ? "is-success" : ""}`}
             type="button"
@@ -299,7 +306,7 @@ export function ShareTokenModal(props: {
             class="modal-toolbar-btn"
             type="button"
             disabled={props.downloadSharePending}
-            onClick={() => props.onDownloadJson(createShareFileName(), props.shareModalJson)}
+            onClick={() => props.onDownloadJson(filename, props.shareModalJson)}
           >
             <span class="modal-btn-icon" aria-hidden="true">
               <DownloadIcon />
@@ -312,7 +319,7 @@ export function ShareTokenModal(props: {
             count: props.selectedCount
           })}
         </div>
-        <div class="modal-note">{props.copy.shareTokenModeHint}</div>
+        <div class="modal-note">{hint}</div>
         <textarea class="modal-textarea share-preview" readOnly value={previewValue} />
       </div>
     </ModalShell>

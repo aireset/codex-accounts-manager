@@ -8,6 +8,7 @@ export function useShareModal(params: {
 }) {
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareModalJson, setShareModalJson] = useState("");
+  const [shareModalMode, setShareModalMode] = useState<"shared" | "auth">("shared");
   const [sharePreviewExpanded, setSharePreviewExpanded] = useState(false);
 
   const handleCopyShareJson = (): void => {
@@ -25,7 +26,15 @@ export function useShareModal(params: {
     }
     if (message.action === "shareTokens" && message.payload?.sharedJson) {
       setShareModalJson(message.payload.sharedJson);
+      setShareModalMode("shared");
       setSharePreviewExpanded(false);
+      setShareModalOpen(true);
+      return true;
+    }
+    if (message.action === "shareAuthList" && message.payload?.authJson) {
+      setShareModalJson(message.payload.authJson);
+      setShareModalMode("auth");
+      setSharePreviewExpanded(true);
       setShareModalOpen(true);
       return true;
     }
@@ -43,6 +52,7 @@ export function useShareModal(params: {
   return {
     shareModalOpen,
     shareModalJson,
+    shareModalMode,
     sharePreviewExpanded,
     handleCopyShareJson,
     handleDownloadShareJson,

@@ -5,6 +5,14 @@ import { formatResetRelativeTime } from "../../src/utils/resetTime";
 type SensitiveKind = "email" | "id" | "name";
 
 export function createShareFileName(): string {
+  return createTimestampedFileName("omniroute-codex-auth-import");
+}
+
+export function createAuthListFileName(): string {
+  return createTimestampedFileName("codex-auths");
+}
+
+function createTimestampedFileName(prefix: string): string {
   const now = new Date();
   const year = String(now.getFullYear());
   const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -12,7 +20,7 @@ export function createShareFileName(): string {
   const hour = String(now.getHours()).padStart(2, "0");
   const minute = String(now.getMinutes()).padStart(2, "0");
   const second = String(now.getSeconds()).padStart(2, "0");
-  return `omniroute-codex-auth-import-${year}${month}${day}-${hour}${minute}${second}.json`;
+  return `${prefix}-${year}${month}${day}-${hour}${minute}${second}.json`;
 }
 
 export function maskSharedJson(raw: string): string {

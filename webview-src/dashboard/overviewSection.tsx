@@ -20,12 +20,14 @@ export function OverviewSection(props: {
   addPending: boolean;
   importPending: boolean;
   exportAllPending: boolean;
+  exportAuthPending: boolean;
   syncPending: boolean;
   refreshAllPending: boolean;
   onToggleAutoSwitchLock: () => void;
   onAddAccount: () => void;
   onImportCurrent: () => void;
   onExportAll: () => void;
+  onExportAuthList: () => void;
   onImportAll: () => void;
   onSyncAccounts: () => void;
   onRefreshAll: () => void;
@@ -125,6 +127,14 @@ export function OverviewSection(props: {
             onClick={props.onExportAll}
           >
             {copy.shareTokenModalTitle}
+          </ActionButton>
+          <ActionButton
+            class="toolbar-btn"
+            pending={props.exportAuthPending}
+            disabled={props.disabled || !props.hasAccounts}
+            onClick={props.onExportAuthList}
+          >
+            {copy.shareAuthList}
           </ActionButton>
           <ActionButton class="toolbar-btn" disabled={props.disabled} onClick={props.onImportAll}>
             {copy.importJson}

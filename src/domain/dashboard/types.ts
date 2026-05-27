@@ -71,8 +71,10 @@ export interface DashboardCopy {
   importCurrent: string;
   refreshAll: string;
   shareToken: string;
+  shareAuthList: string;
   shareTokenDisabledTip: string;
   shareTokenModeHint: string;
+  shareAuthListModeHint: string;
   tokenAutomationTitle: string;
   tokenAutomationSub: string;
   tokenAutomationOn: string;
@@ -99,6 +101,7 @@ export interface DashboardCopy {
   batchResyncBtn: string;
   batchRemoveBtn: string;
   batchExportBtn: string;
+  batchExportAuthBtn: string;
   batchSelectedCount: string;
   batchResultTitle: string;
   batchResultSuccess: string;
@@ -156,6 +159,7 @@ export interface DashboardCopy {
   settingsTitle: string;
   addAccountModalTitle: string;
   shareTokenModalTitle: string;
+  shareAuthListModalTitle: string;
   oauthTab: string;
   importJsonTab: string;
   authorizationLink: string;
@@ -383,6 +387,7 @@ export type DashboardActionName =
   | "markAnnouncementRead"
   | "markAllAnnouncementsRead"
   | "shareTokens"
+  | "shareAuthList"
   | "restoreFromBackup"
   | "restoreFromAuthJson"
   | "copyText"
@@ -438,6 +443,7 @@ export interface DashboardActionPayload {
 
 export interface DashboardActionResultPayload {
   sharedJson?: string;
+  authJson?: string;
   oauthSession?: DashboardOAuthSessionDescriptor;
   importPreview?: CodexImportPreviewSummary;
   importResult?: CodexImportResultSummary;
